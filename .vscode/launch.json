@@ -1,0 +1,17 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "mermaid-live-editor",
+            "type": "node",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/WebApp/mermaid-live-editor-develop",
+            "program": "${workspaceFolder}/WebApp/mermaid-live-editor-develop/node_modules/vite/bin/vite",
+            "args": [
+                "dev",
+                "--port",
+                "3001"
+            ],
+        }
+    ]
+}
