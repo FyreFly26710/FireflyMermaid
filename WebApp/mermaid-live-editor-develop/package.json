@@ -4,23 +4,7 @@
   "type": "module",
   "license": "MIT",
   "scripts": {
-    "dev": "vite dev --port 3001",
-    "dev:force": "MERMAID_LOCAL=true pnpm dev --force",
-    "dev:test": "pnpm dev",
-    "build": "vite build",
-    "preview": "vite preview",
-    "lint": "prettier --check --cache . && eslint --ignore-path .gitignore .",
-    "lint:fix": "prettier --write --cache . && eslint --fix --ignore-path .gitignore .",
-    "format": "prettier --write --cache .",
-    "pre-commit": "lint-staged",
-    "postinstall": "husky install && svelte-kit sync && (git config blame.ignoreRevsFile .git-blame-ignore-revs || true)",
-    "test:unit": "vitest",
-    "test:unit:ui": "vitest --ui",
-    "test:unit:coverage": "vitest run --coverage",
-    "test": "pnpm test:unit && pnpm test:e2e",
-    "test:e2e": "playwright test",
-    "test:e2e:ui": "playwright test --ui",
-    "test:e2e:debug": "playwright test --debug"
+    "dev": "vite dev --port 3001"
   },
   "devDependencies": {
     "@fortawesome/fontawesome-free": "^6.7.2",
