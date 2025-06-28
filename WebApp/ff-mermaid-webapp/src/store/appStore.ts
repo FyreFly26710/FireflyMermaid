@@ -9,7 +9,7 @@ const defaultState: State = {
     B --> C{Let me think}
     C -->|One| D[Laptop]
     C -->|Two| E[iPhone]
-    C -->|Three| F[fa:fa-car Car]
+    C -->|Three| F[Car]
   `,
   mermaid: JSON.stringify({
     theme: 'default'

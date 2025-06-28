@@ -3,7 +3,6 @@ import zenuml from '@mermaid-js/mermaid-zenuml';
 import type { MermaidConfig, RenderResult } from 'mermaid';
 import mermaid from 'mermaid';
 
-// Initialize mermaid with external diagrams and layouts
 mermaid.registerLayoutLoaders(elkLayouts);
 const init = mermaid.registerExternalDiagrams([zenuml]);
 
@@ -41,7 +40,4 @@ export const standardizeDiagramType = (diagramType: string): string => {
   }
 };
 
-// Helper function to check if code might contain FontAwesome icons
-export const mayContainFontAwesome = (code: string): boolean => {
-  return code.includes('fa:fa-') || code.includes('fab:') || code.includes('fas:') || code.includes('far:');
-}; 
+ 

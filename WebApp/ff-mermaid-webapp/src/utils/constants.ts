@@ -15,7 +15,7 @@ export const DEFAULT_CODE = `flowchart TD
     B --> C{Let me think}
     C -->|One| D[Laptop]
     C -->|Two| E[iPhone]
-    C -->|Three| F[fa:fa-car Car]
+    C -->|Three| F[Car]
   `;
 
 // Event names for analytics

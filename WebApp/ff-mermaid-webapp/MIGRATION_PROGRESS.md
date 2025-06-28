@@ -192,4 +192,158 @@ The editor is now feature-complete with professional-grade capabilities:
 - **Responsive Design**: Works on desktop and mobile
 - **Accessibility**: Proper ARIA labels and keyboard navigation
 
-The migration successfully replaces the Svelte editor with a React equivalent that has **no mobile/AI features** as requested, focusing on the core editing experience! 
+The migration successfully replaces the Svelte editor with a React equivalent that has **no mobile/AI features** as requested, focusing on the core editing experience!
+
+## 🔍 DiagramView Enhancement Plan
+
+### Current State: Minimal Working Implementation ✅
+
+The React `DiagramView.tsx` currently provides basic diagram rendering functionality. With the SVG styling bug now fixed, we have a solid foundation to build upon. The next step is to systematically add features to match the Svelte implementation's capabilities.
+
+### Available State Management
+
+#### **AppStore State** (`src/store/appStore.ts`)
+**Core Diagram State:**
+- `code: string` - Mermaid diagram code
+- `mermaid: string` - JSON configuration 
+- `updateDiagram: boolean` - Force update flag
+- `rough: boolean` - Rough sketch mode toggle
+- `panZoom: boolean` - Pan/zoom functionality toggle
+- `grid: boolean` - Grid background toggle
+- `editorMode: 'code' | 'config'` - Editor mode
+
+**Error & Metadata:**
+- `error?: Error` - Current rendering error
+- `errorMarkers: MarkerData[]` - Editor error markers
+- `diagramType?: string` - Detected diagram type
+
+**UI Preferences:**
+- `panelSizes: number[]` - Resizable panel dimensions
+- `themeMode: 'light' | 'dark' | 'auto'` - Theme selection
+- `showConfig: boolean` - Configuration panel visibility
+
+#### **HistoryStore State** (`src/store/historyStore.ts`)
+**History Management:**
+- `historyMode: 'auto' | 'manual' | 'loader'` - History type
+- `autoHistory: HistoryEntry[]` - Automatic saves
+- `manualHistory: HistoryEntry[]` - User-saved entries
+- `loaderHistory: HistoryEntry[]` - Sample/loaded diagrams
+- `currentHistory: HistoryEntry[]` - Currently displayed history
+
+### Feature Comparison with Svelte `View.svelte`
+
+#### **✅ Currently Implemented**
+1. **Basic Rendering** - Mermaid diagram rendering with error handling
+2. **State Integration** - Zustand store integration
+3. **Grid Background** - Theme-aware grid pattern
+4. **Error Display** - Visual error state feedback
+5. **FontAwesome Removal** - Simplified without icon font complexity
+
+#### **🔴 Missing Critical Features**
+
+##### **1. Race Condition Protection**
+**Svelte Implementation:**
+```typescript
+let pendingStateChange = Promise.resolve();
+stateStore.subscribe((state) => {
+  pendingStateChange = pendingStateChange.then(() => handleStateChange(state));
+});
+```
+**Status:** ❌ Not implemented - vulnerable to overlapping renders
+
+##### **2. Pan-Zoom Integration**
+**Svelte Implementation:**
+```typescript
+const setupPanZoomObserver = () => {
+  panZoomState.onPanZoomChange = (pan, zoom) => {
+    updateCodeStore({ pan, zoom });
+    logEvent('panZoom');
+  };
+};
+
+const handlePanZoom = (state: State, graphDiv: SVGSVGElement) => {
+  panZoomState.updateElement(graphDiv, state);
+};
+```
+**Status:** ❌ Not implemented - no diagram navigation capability
+
+##### **3. Rough Sketch Integration**
+**Svelte Implementation:**
+```typescript
+if (state.rough) {
+  const svg2roughjs = new Svg2Roughjs('#container');
+  svg2roughjs.svg = graphDiv;
+  await svg2roughjs.sketch();
+  // ... sketch processing
+}
+```
+**Status:** ❌ Not implemented - rough mode non-functional
+
+##### **4. Advanced SVG Processing**
+**Svelte Implementation:**
+```typescript
+graphDiv.setAttribute('height', '100%');
+graphDiv.style.maxWidth = '100%';
+if (bindFunctions) {
+  bindFunctions(graphDiv);
+}
+// Scroll position preservation
+if (view?.parentElement && scroll) {
+  view.parentElement.scrollTop = scroll;
+}
+```
+**Status:** ⚠️ Partially implemented - basic styling only
+
+##### **5. Optimized Change Detection**
+**Svelte Implementation:**
+```typescript
+if (
+  code === state.code &&
+  config === state.mermaid &&
+  rough === state.rough &&
+  panZoom === state.panZoom
+) {
+  return; // Skip unnecessary renders
+}
+```
+**Status:** ❌ Not implemented - renders on every state change
+
+##### **6. Performance Monitoring**
+**Svelte Implementation:**
+```typescript
+const startTime = Date.now();
+// ... rendering
+const renderTime = Date.now() - startTime;
+saveStatistics({ code, diagramType, isRough: state.rough, renderTime });
+recordRenderTime(renderTime, () => {
+  $inputStateStore.updateDiagram = true;
+});
+```
+**Status:** ❌ Not implemented - no render time tracking
+
+### Implementation Roadmap
+
+#### **Phase 1: Core Stability** 🔴
+1. **Race Condition Protection** - Implement promise queue for state changes
+2. **Change Detection Optimization** - Skip unnecessary re-renders
+3. **Enhanced SVG Processing** - Proper element styling and function binding
+
+#### **Phase 2: User Experience** 🟡  
+4. **Pan-Zoom Integration** - Full diagram navigation capability
+5. **Rough Sketch Support** - Working rough mode with svg2roughjs
+6. **Scroll Position Preservation** - Maintain view position during updates
+
+#### **Phase 3: Polish** 🟢
+7. **Performance Monitoring** - Render time statistics and logging
+8. **History Integration** - Connect with historyStore for state management
+9. **Advanced Error Handling** - Graceful degradation and recovery
+
+### Implementation Strategy
+
+**Minimal Code Approach:** Start with the simplest possible implementation for each feature, focusing on functionality over optimization initially.
+
+**Incremental Development:** Add one feature at a time, ensuring each works correctly before moving to the next.
+
+**Svelte Parity:** Use the working Svelte implementation as the reference for expected behavior and edge cases.
+
+**Build Validation:** Maintain successful TypeScript compilation throughout development process. 
