@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Box, Container, useTheme } from '@mui/material';
+import { Box, useTheme } from '@mui/material';
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
 import styled from 'styled-components';
 import { useAppStore } from '../hooks/useAppStore';
@@ -56,9 +56,13 @@ const StyledResizeHandle = styled(PanelResizeHandle)`
   }
 `;
 
+const StyledMainLayout = styled(Box)`
+  height: 100%;
+  padding: 8px;
+`;
+
 const EditorPage: React.FC = () => {
   const { updateState, code, panelSizes, setPanelSizes } = useAppStore();
-  const theme = useTheme();
 
   // Initialize with a sample diagram
   useEffect(() => {
@@ -84,11 +88,20 @@ const EditorPage: React.FC = () => {
     }
   }, [code, updateState]);
 
-  const panelContentSx = {
+  const editorPanelSx = {
     height: '100%',
     border: 1,
     borderColor: 'divider',
-    borderRadius: 1,
+    borderRadius: '8px 0 0 8px',
+    overflow: 'hidden',
+    backgroundColor: 'background.paper'
+  };
+
+  const viewerPanelSx = {
+    height: '100%',
+    border: 1,
+    borderColor: 'divider',
+    borderRadius: '0 8px 8px 0',
     overflow: 'hidden',
     backgroundColor: 'background.paper'
   };
@@ -97,14 +110,14 @@ const EditorPage: React.FC = () => {
     <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
       <Navbar />
       
-      <Container maxWidth="xl" sx={{ flex: 1, py: 2 }}>
+      <StyledMainLayout>
         <StyledPanelGroup 
           direction="horizontal"
           onLayout={(sizes) => setPanelSizes(sizes)}
         >
           {/* Editor Panel */}
-          <StyledPanel defaultSize={panelSizes[0]} minSize={25} maxSize={75}>
-            <Box sx={panelContentSx}>
+          <StyledPanel defaultSize={panelSizes[0]} minSize={30} maxSize={70}>
+            <Box sx={editorPanelSx}>
               <Editor />
             </Box>
           </StyledPanel>
@@ -113,16 +126,16 @@ const EditorPage: React.FC = () => {
           <StyledResizeHandle />
           
           {/* Diagram Panel */}
-          <StyledPanel defaultSize={panelSizes[1]} minSize={25} maxSize={75}>
-            <Box sx={panelContentSx}>
+          <StyledPanel defaultSize={panelSizes[1]} minSize={30} maxSize={70}>
+            <Box sx={viewerPanelSx}>
               <Actions />
-              <Box sx={{ height: 'calc(100% - 56px)' }}>
+              <Box sx={{ height: 'calc(100% - 48px)' }}>
                 <DiagramView />
               </Box>
             </Box>
           </StyledPanel>
         </StyledPanelGroup>
-      </Container>
+      </StyledMainLayout>
     </Box>
   );
 };

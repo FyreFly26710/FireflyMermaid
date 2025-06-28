@@ -9,7 +9,8 @@ import {
   ListItemText,
   Divider,
   Tooltip,
-  IconButton
+  IconButton,
+  styled
 } from '@mui/material';
 import {
   Share as ShareIcon,
@@ -22,32 +23,34 @@ import {
   Description as SvgIcon,
   Apps as SampleIcon
 } from '@mui/icons-material';
-import styled from 'styled-components';
 import { useAppStore } from '../../hooks/useAppStore';
 import { serializeState } from '../../utils/serialization';
 import { logEvent } from '../../utils/statistics';
 
-const StyledActionsContainer = styled(Box)`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px;
-  border-bottom: 1px solid #e0e0e0;
-  background-color: #f5f5f5;
-  
-  [data-theme="dark"] & {
-    border-bottom-color: #3a3a3a;
-    background-color: #2a2a2a;
-  }
-`;
+const StyledActionsContainer = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  gap: 8,
+  padding: 8,
+  borderBottom: `1px solid ${theme.palette.divider}`,
+  backgroundColor: theme.palette.mode === 'light' 
+    ? theme.palette.grey[50] 
+    : theme.palette.grey[900],
+  minHeight: 48,
+}));
 
-const StyledActionButton = styled(Button)`
-  && {
-    min-width: auto;
-    text-transform: none;
-    font-weight: 500;
-  }
-`;
+const StyledActionButton = styled(Button)(({ theme }) => ({
+  minWidth: 'auto',
+  textTransform: 'none',
+  fontWeight: 500,
+  color: theme.palette.text.primary,
+  borderColor: theme.palette.divider,
+  
+  '&:hover': {
+    backgroundColor: theme.palette.action.hover,
+    borderColor: theme.palette.primary.main,
+  },
+}));
 
 const sampleDiagrams = [
   {

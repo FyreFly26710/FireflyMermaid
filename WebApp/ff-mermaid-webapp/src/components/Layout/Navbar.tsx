@@ -3,84 +3,68 @@ import {
   AppBar,
   Toolbar,
   IconButton,
-  Button,
   Box,
   Tooltip,
-  Typography
+  Typography,
+  styled
 } from '@mui/material';
 import {
   GitHub as GitHubIcon,
   History as HistoryIcon,
   Settings as SettingsIcon
 } from '@mui/icons-material';
-import styled from 'styled-components';
 import { History } from '../History';
 import { ConfigPanel } from '../UI';
 import { useAppStore } from '../../hooks/useAppStore';
 
-const StyledAppBar = styled(AppBar)`
-  && {
-    background-color: #ffffff;
-    color: #000000;
-    border-bottom: 1px solid #e0e0e0;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
-    
-    [data-theme="dark"] & {
-      background-color: #1e1e1e;
-      color: #ffffff;
-      border-bottom-color: #3a3a3a;
-    }
-  }
-`;
+const StyledAppBar = styled(AppBar)(({ theme }) => ({
+  backgroundColor: theme.palette.background.paper,
+  color: theme.palette.text.primary,
+  borderBottom: `1px solid ${theme.palette.divider}`,
+  boxShadow: theme.palette.mode === 'light' 
+    ? '0 1px 3px rgba(0, 0, 0, 0.12)' 
+    : '0 1px 3px rgba(0, 0, 0, 0.3)',
+}));
 
-const StyledToolbar = styled(Toolbar)`
-  && {
-    min-height: 56px;
-    padding: 0 16px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-`;
+const StyledToolbar = styled(Toolbar)({
+  minHeight: 56,
+  padding: '0 16px',
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+});
 
-const StyledNavSection = styled(Box)`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-`;
+const StyledNavSection = styled(Box)({
+  display: 'flex',
+  alignItems: 'center',
+  gap: 8,
+});
 
-const StyledBrandSection = styled(Box)`
-  display: flex;
-  align-items: center;
-  gap: 12px;
-`;
+const StyledBrandSection = styled(Box)({
+  display: 'flex',
+  alignItems: 'center',
+  gap: 12,
+});
 
-const StyledNavButton = styled(IconButton)`
-  && {
-    padding: 8px;
-    border-radius: 8px;
-    transition: all 0.2s ease;
+const StyledNavButton = styled(IconButton)(({ theme }) => ({
+  padding: 8,
+  borderRadius: 8,
+  transition: 'all 0.2s ease',
+  color: theme.palette.text.primary,
+  
+  '&:hover': {
+    backgroundColor: theme.palette.action.hover,
+  },
+  
+  '&.active': {
+    backgroundColor: theme.palette.primary.main,
+    color: theme.palette.primary.contrastText,
     
-    &:hover {
-      background-color: rgba(0, 0, 0, 0.04);
-    }
-    
-    &.active {
-      background-color: #1976d2;
-      color: #ffffff;
-      
-      &:hover {
-        background-color: #1565c0;
-      }
-    }
-    
-    [data-theme="dark"] & {
-      &:hover {
-        background-color: rgba(255, 255, 255, 0.08);
-      }
-    }
-  }
-`;
+    '&:hover': {
+      backgroundColor: theme.palette.primary.dark,
+    },
+  },
+}));
 
 interface NavbarProps {
   className?: string;

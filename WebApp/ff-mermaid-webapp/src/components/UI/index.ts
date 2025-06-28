@@ -1,2 +1,2 @@
 export { ConfigPanel } from './ConfigPanel';
-export * from './StyledComponents'; 
+// export * from './StyledComponents'; 

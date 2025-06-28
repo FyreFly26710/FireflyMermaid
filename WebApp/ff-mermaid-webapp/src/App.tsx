@@ -1,13 +1,22 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
+import { useMediaQuery } from '@mui/material';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { lightTheme, darkTheme } from './styles/theme';
 import { EditorPage, ViewPage } from './pages';
+import { useAppStore } from './hooks/useAppStore';
 
 const App: React.FC = () => {
-  // For now, use light theme - we can add theme management later
-  const theme = lightTheme;
+  const { themeMode } = useAppStore();
+  const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
+  
+  const theme = useMemo(() => {
+    if (themeMode === 'auto') {
+      return prefersDarkMode ? darkTheme : lightTheme;
+    }
+    return themeMode === 'dark' ? darkTheme : lightTheme;
+  }, [themeMode, prefersDarkMode]);
 
   return (
     <ThemeProvider theme={theme}>

@@ -14,6 +14,7 @@ This rule guides the migration of the Mermaid Live Editor from Svelte ([mermaid-
 - **Styling**: Styled-components (StyledComponentName convention)
 - **No Tests**: Testing is not required for this migration
 - **Language**: TypeScripts and tsx (do not use js and jsx)
+- **Environment**: Desktop-only responsive design
 
 ## Architecture Overview
 
