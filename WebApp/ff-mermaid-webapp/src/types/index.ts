@@ -66,4 +66,24 @@ export interface StatisticsData {
   diagramType?: string;
   isRough: boolean;
   renderTime: number;
-} 
+}
+
+export type HistoryType = 'auto' | 'manual' | 'loader';
+
+export type HistoryEntry = { 
+  id: string; 
+  state: State; 
+  time: number; 
+  url?: string 
+} & (
+  | {
+      type: 'loader';
+      name: string;
+    }
+  | {
+      type: HistoryType;
+      name?: string;
+    }
+);
+
+export type Optional<T, K extends keyof T> = Pick<Partial<T>, K> & Omit<T, K>; 

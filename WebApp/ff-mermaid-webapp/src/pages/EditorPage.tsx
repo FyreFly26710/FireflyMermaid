@@ -1,8 +1,9 @@
 import React, { useEffect } from 'react';
-import { Box, Container, Typography, Grid } from '@mui/material';
+import { Box, Container, Grid } from '@mui/material';
 import { useAppStore } from '../hooks/useAppStore';
 import { DiagramView } from '../components/View';
 import { Editor } from '../components/Editor';
+import { Navbar } from '../components/Layout';
 
 const EditorPage: React.FC = () => {
   const { updateState, code } = useAppStore();
@@ -32,40 +33,41 @@ const EditorPage: React.FC = () => {
   }, [code, updateState]);
 
   return (
-    <Container maxWidth="xl" sx={{ height: '100vh', py: 2 }}>
-      <Typography variant="h4" gutterBottom>
-        Mermaid Live Editor - React Migration
-      </Typography>
-      <Box sx={{ height: 'calc(100vh - 120px)' }}>
-        <Grid container spacing={1} sx={{ height: '100%' }}>
-          {/* Editor Panel */}
-          <Grid item xs={12} md={6} sx={{ height: '100%' }}>
-            <Box sx={{ 
-              height: '100%', 
-              border: 1, 
-              borderColor: 'divider', 
-              borderRadius: 1,
-              overflow: 'hidden'
-            }}>
-              <Editor />
-            </Box>
+    <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
+      <Navbar />
+      
+      <Container maxWidth="xl" sx={{ flex: 1, py: 2 }}>
+        <Box sx={{ height: '100%' }}>
+          <Grid container spacing={1} sx={{ height: '100%' }}>
+            {/* Editor Panel */}
+            <Grid item xs={12} md={6} sx={{ height: '100%' }}>
+              <Box sx={{ 
+                height: '100%', 
+                border: 1, 
+                borderColor: 'divider', 
+                borderRadius: 1,
+                overflow: 'hidden'
+              }}>
+                <Editor />
+              </Box>
+            </Grid>
+            
+            {/* Diagram Panel */}
+            <Grid item xs={12} md={6} sx={{ height: '100%' }}>
+              <Box sx={{ 
+                height: '100%', 
+                border: 1, 
+                borderColor: 'divider', 
+                borderRadius: 1,
+                overflow: 'hidden'
+              }}>
+                <DiagramView />
+              </Box>
+            </Grid>
           </Grid>
-          
-          {/* Diagram Panel */}
-          <Grid item xs={12} md={6} sx={{ height: '100%' }}>
-            <Box sx={{ 
-              height: '100%', 
-              border: 1, 
-              borderColor: 'divider', 
-              borderRadius: 1,
-              overflow: 'hidden'
-            }}>
-              <DiagramView />
-            </Box>
-          </Grid>
-        </Grid>
-      </Box>
-    </Container>
+        </Box>
+      </Container>
+    </Box>
   );
 };
 

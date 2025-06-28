@@ -40,7 +40,6 @@ declare module '$env/static/private' {
 	export const INFOPATH: string;
 	export const LOGNAME: string;
 	export const MallocNanoZone: string;
-	export const OLDPWD: string;
 	export const ORIGINAL_XDG_CURRENT_DESKTOP: string;
 	export const PATH: string;
 	export const PWD: string;
@@ -49,31 +48,14 @@ declare module '$env/static/private' {
 	export const SSH_AUTH_SOCK: string;
 	export const TMPDIR: string;
 	export const USER: string;
-	export const VSCODE_CODE_CACHE_PATH: string;
-	export const VSCODE_CRASH_REPORTER_PROCESS_TYPE: string;
-	export const VSCODE_CWD: string;
-	export const VSCODE_ESM_ENTRYPOINT: string;
-	export const VSCODE_HANDLES_UNCAUGHT_ERRORS: string;
-	export const VSCODE_IPC_HOOK: string;
-	export const VSCODE_NLS_CONFIG: string;
-	export const VSCODE_PID: string;
-	export const VSCODE_PROCESS_TITLE: string;
 	export const XPC_FLAGS: string;
 	export const XPC_SERVICE_NAME: string;
 	export const _: string;
 	export const __CFBundleIdentifier: string;
 	export const __CF_USER_TEXT_ENCODING: string;
-	export const ELECTRON_RUN_AS_NODE: string;
-	export const VITEST_VSCODE_LOG: string;
-	export const VITEST_VSCODE: string;
-	export const TEST: string;
-	export const VITEST_WS_ADDRESS: string;
-	export const VITEST: string;
+	export const NODE_OPTIONS: string;
+	export const VSCODE_INSPECTOR_OPTIONS: string;
 	export const NODE_ENV: string;
-	export const PROD: string;
-	export const DEV: string;
-	export const BASE_URL: string;
-	export const MODE: string;
 }
 
 /**
@@ -119,7 +101,6 @@ declare module '$env/dynamic/private' {
 		INFOPATH: string;
 		LOGNAME: string;
 		MallocNanoZone: string;
-		OLDPWD: string;
 		ORIGINAL_XDG_CURRENT_DESKTOP: string;
 		PATH: string;
 		PWD: string;
@@ -128,31 +109,14 @@ declare module '$env/dynamic/private' {
 		SSH_AUTH_SOCK: string;
 		TMPDIR: string;
 		USER: string;
-		VSCODE_CODE_CACHE_PATH: string;
-		VSCODE_CRASH_REPORTER_PROCESS_TYPE: string;
-		VSCODE_CWD: string;
-		VSCODE_ESM_ENTRYPOINT: string;
-		VSCODE_HANDLES_UNCAUGHT_ERRORS: string;
-		VSCODE_IPC_HOOK: string;
-		VSCODE_NLS_CONFIG: string;
-		VSCODE_PID: string;
-		VSCODE_PROCESS_TITLE: string;
 		XPC_FLAGS: string;
 		XPC_SERVICE_NAME: string;
 		_: string;
 		__CFBundleIdentifier: string;
 		__CF_USER_TEXT_ENCODING: string;
-		ELECTRON_RUN_AS_NODE: string;
-		VITEST_VSCODE_LOG: string;
-		VITEST_VSCODE: string;
-		TEST: string;
-		VITEST_WS_ADDRESS: string;
-		VITEST: string;
+		NODE_OPTIONS: string;
+		VSCODE_INSPECTOR_OPTIONS: string;
 		NODE_ENV: string;
-		PROD: string;
-		DEV: string;
-		BASE_URL: string;
-		MODE: string;
 		[key: `PUBLIC_${string}`]: undefined;
 		[key: `${string}`]: string | undefined;
 	}
