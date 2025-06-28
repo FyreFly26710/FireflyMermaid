@@ -54,4 +54,16 @@ export interface ErrorHash {
     first_column: number;
     last_column: number;
   };
+}
+
+export interface Point {
+  x: number;
+  y: number;
+}
+
+export interface StatisticsData {
+  code: string;
+  diagramType?: string;
+  isRough: boolean;
+  renderTime: number;
 } 

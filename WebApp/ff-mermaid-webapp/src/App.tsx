@@ -2,29 +2,21 @@ import React from 'react';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { Box } from '@mui/material';
-import { lightTheme } from './styles/theme';
-
-// Placeholder components for now
-const EditorPage: React.FC = () => {
-  return (
-    <Box sx={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <div className="text-center">
-        <h1 className="text-2xl font-bold text-gray-800 mb-2">Mermaid Live Editor</h1>
-        <p className="text-gray-600">Ready for development</p>
-      </div>
-    </Box>
-  );
-};
+import { lightTheme, darkTheme } from './styles/theme';
+import { EditorPage, ViewPage } from './pages';
 
 const App: React.FC = () => {
+  // For now, use light theme - we can add theme management later
+  const theme = lightTheme;
+
   return (
-    <ThemeProvider theme={lightTheme}>
+    <ThemeProvider theme={theme}>
       <CssBaseline />
       <Router>
         <Routes>
           <Route path="/" element={<Navigate to="/edit" replace />} />
           <Route path="/edit" element={<EditorPage />} />
+          <Route path="/view" element={<ViewPage />} />
         </Routes>
       </Router>
     </ThemeProvider>
