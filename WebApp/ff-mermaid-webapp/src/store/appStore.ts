@@ -27,6 +27,11 @@ interface AppState extends State {
   errorMarkers: MarkerData[];
   diagramType?: string;
   
+  // UI preferences
+  panelSizes: number[];
+  themeMode: 'light' | 'dark' | 'auto';
+  showConfig: boolean;
+  
   // Actions
   updateCode: (code: string) => void;
   updateConfig: (mermaid: string) => void;
@@ -38,6 +43,9 @@ interface AppState extends State {
   togglePanZoom: () => void;
   toggleGrid: () => void;
   setEditorMode: (editorMode: EditorMode) => void;
+  setPanelSizes: (sizes: number[]) => void;
+  setThemeMode: (mode: 'light' | 'dark' | 'auto') => void;
+  toggleConfig: () => void;
   reset: () => void;
 }
 
@@ -50,6 +58,11 @@ export const useAppStore = create<AppState>()(
       errorMarkers: [],
       diagramType: undefined,
       
+      // UI preferences
+      panelSizes: [50, 50],
+      themeMode: 'auto',
+      showConfig: false,
+      
       // Actions
       updateCode: (code: string) => set({ code }),
       updateConfig: (mermaid: string) => set({ mermaid }),
@@ -61,6 +74,9 @@ export const useAppStore = create<AppState>()(
       togglePanZoom: () => set((state) => ({ panZoom: !state.panZoom })),
       toggleGrid: () => set((state) => ({ grid: !state.grid })),
       setEditorMode: (editorMode: EditorMode) => set({ editorMode }),
+      setPanelSizes: (panelSizes: number[]) => set({ panelSizes }),
+      setThemeMode: (themeMode: 'light' | 'dark' | 'auto') => set({ themeMode }),
+      toggleConfig: () => set((state) => ({ showConfig: !state.showConfig })),
       
       // Reset to default
       reset: () => set(defaultState)
@@ -73,7 +89,10 @@ export const useAppStore = create<AppState>()(
         rough: state.rough,
         panZoom: state.panZoom,
         grid: state.grid,
-        editorMode: state.editorMode
+        editorMode: state.editorMode,
+        panelSizes: state.panelSizes,
+        themeMode: state.themeMode,
+        showConfig: state.showConfig
       })
     }
   )

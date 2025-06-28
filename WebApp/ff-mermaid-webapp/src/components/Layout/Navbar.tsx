@@ -11,11 +11,12 @@ import {
 import {
   GitHub as GitHubIcon,
   History as HistoryIcon,
-  Share as ShareIcon,
-  Download as DownloadIcon
+  Settings as SettingsIcon
 } from '@mui/icons-material';
 import styled from 'styled-components';
 import { History } from '../History';
+import { ConfigPanel } from '../UI';
+import { useAppStore } from '../../hooks/useAppStore';
 
 const StyledAppBar = styled(AppBar)`
   && {
@@ -87,6 +88,7 @@ interface NavbarProps {
 
 export const Navbar: React.FC<NavbarProps> = ({ className }) => {
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+  const { showConfig, toggleConfig } = useAppStore();
 
   const handleGitHubClick = () => {
     window.open('https://github.com/FyreFly26710/FireflyMermaid', '_blank');
@@ -96,14 +98,8 @@ export const Navbar: React.FC<NavbarProps> = ({ className }) => {
     setIsHistoryOpen(!isHistoryOpen);
   };
 
-  const handleShareClick = () => {
-    // Placeholder - will implement sharing functionality later
-    console.log('Share clicked - placeholder');
-  };
-
-  const handleDownloadClick = () => {
-    // Placeholder - will implement download functionality later
-    console.log('Download clicked - placeholder');
+  const handleConfigToggle = () => {
+    toggleConfig();
   };
 
   return (
@@ -138,23 +134,14 @@ export const Navbar: React.FC<NavbarProps> = ({ className }) => {
               </StyledNavButton>
             </Tooltip>
 
-            <Tooltip title="Share (Coming soon)">
+            <Tooltip title="Configuration">
               <StyledNavButton
-                onClick={handleShareClick}
+                onClick={handleConfigToggle}
                 size="small"
-                aria-label="Share diagram"
+                className={showConfig ? 'active' : ''}
+                aria-label="Toggle configuration"
               >
-                <ShareIcon />
-              </StyledNavButton>
-            </Tooltip>
-
-            <Tooltip title="Download (Coming soon)">
-              <StyledNavButton
-                onClick={handleDownloadClick}
-                size="small"
-                aria-label="Download diagram"
-              >
-                <DownloadIcon />
+                <SettingsIcon />
               </StyledNavButton>
             </Tooltip>
           </StyledNavSection>
@@ -164,6 +151,11 @@ export const Navbar: React.FC<NavbarProps> = ({ className }) => {
       <History 
         open={isHistoryOpen} 
         onClose={() => setIsHistoryOpen(false)} 
+      />
+
+      <ConfigPanel
+        open={showConfig}
+        onClose={() => toggleConfig()}
       />
     </>
   );
