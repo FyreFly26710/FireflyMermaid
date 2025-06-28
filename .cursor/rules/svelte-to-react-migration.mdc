@@ -1,0 +1,410 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Mermaid Live Editor: Svelte to React Migration Guide
+
+## Overview
+This rule guides the migration of the Mermaid Live Editor from Svelte ([mermaid-live-editor-develop](mdc:WebApp/mermaid-live-editor-develop)) to React ([ff-mermaid-webapp](mdc:WebApp/ff-mermaid-webapp)).
+
+## Technology Stack
+- **State Management**: Zustand with localStorage persistence
+- **UI Library**: Material-UI (MUI) + Tailwind CSS
+- **Styling**: Styled-components (StyledComponentName convention)
+- **No Tests**: Testing is not required for this migration
+- **Language**: TypeScripts and tsx (do not use js and jsx)
+
+## Architecture Overview
+
+### Svelte App Structure
+- **Entry Point**: [+page.svelte](mdc:WebApp/mermaid-live-editor-develop/src/routes/+page.svelte) - handles routing redirects
+- **Main Editor**: [edit/+page.svelte](mdc:WebApp/mermaid-live-editor-develop/src/routes/edit/+page.svelte) - primary editor interface
+- **Layout**: [+layout.svelte](mdc:WebApp/mermaid-live-editor-develop/src/routes/+layout.svelte) - app shell with theme, toaster, service worker
+- **State Management**: [state.ts](mdc:WebApp/mermaid-live-editor-develop/src/lib/util/state.ts) - Svelte stores for global state
+- **Core Rendering**: [View.svelte](mdc:WebApp/mermaid-live-editor-develop/src/lib/components/View.svelte) - diagram rendering component
+
+### React App Structure
+- **Entry Point**: [App.jsx](mdc:WebApp/ff-mermaid-webapp/src/App.jsx) - main React component
+- **Build Config**: [package.json](mdc:WebApp/ff-mermaid-webapp/package.json) - React + Vite setup
+
+## Migration Patterns
+
+### 1. State Management Migration
+**Svelte Stores → Zustand Store**
+
+```javascript
+// Svelte (current)
+export const inputStateStore = persist(writable(defaultState), localStorage(), 'codeStore');
+export const stateStore = derived([inputStateStore], ([state], set) => {
+  void processState(state).then(set);
+}, currentState);
+
+// React (target) - Zustand with persistence
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
+
+const useAppStore = create(
+  persist(
+    (set, get) => ({
+      // State
+      code: defaultState.code,
+      mermaid: defaultState.mermaid,
+      updateDiagram: defaultState.updateDiagram,
+      rough: defaultState.rough,
+      panZoom: defaultState.panZoom,
+      grid: defaultState.grid,
+      editorMode: 'code',
+      error: undefined,
+      errorMarkers: [],
+      
+      // Actions
+      updateCode: (code) => set({ code }),
+      updateConfig: (mermaid) => set({ mermaid }),
+      updateState: (newState) => set(newState),
+      processState: async () => {
+        const state = get();
+        // Process state logic here
+      }
+    }),
+    {
+      name: 'mermaid-editor-store',
+      partialize: (state) => ({
+        code: state.code,
+        mermaid: state.mermaid,
+        rough: state.rough,
+        panZoom: state.panZoom,
+        grid: state.grid,
+        editorMode: state.editorMode
+      })
+    }
+  )
+);
+```
+
+### 2. Component Structure Migration
+**Svelte Components → React Components with MUI + Styled Components**
+
+```javascript
+// Svelte (current)
+<script lang="ts">
+  let { panZoomState, shouldShowGrid }: Props = $props();
+  let container: HTMLDivElement | undefined = $state();
+  
+  const handleStateChange = async (state: ValidatedState) => {
+    // Component logic
+  };
+</script>
+
+// React (target)
+import { Box, Paper } from '@mui/material';
+import styled from 'styled-components';
+
+const StyledViewContainer = styled(Paper)`
+  height: 100%;
+  width: 100%;
+  overflow: auto;
+  ${({ shouldShowGrid, theme }) => shouldShowGrid && `
+    background-size: 30px 30px;
+    background-image: radial-gradient(circle, ${theme.palette.mode === 'dark' ? '#46464646' : '#e4e4e48c'} 2px, transparent 2px);
+  `}
+`;
+
+const StyledDiagramContainer = styled(Box)`
+  height: 100%;
+  overflow: auto;
+`;
+
+const View = ({ panZoomState, shouldShowGrid }) => {
+  const [container, setContainer] = useState(null);
+  
+  const handleStateChange = useCallback(async (state) => {
+    // Component logic
+  }, []);
+  
+  return (
+    <StyledViewContainer shouldShowGrid={shouldShowGrid}>
+      <StyledDiagramContainer ref={setContainer} />
+    </StyledViewContainer>
+  );
+};
+```
+
+### 3. Event Handling Migration
+**Svelte Events → React Events with MUI**
+
+```javascript
+// Svelte (current)
+<Switch
+  bind:checked={isViewMode}
+  onclick={() => {
+    logEvent('mobileViewToggle');
+  }} />
+
+// React (target) - MUI Switch
+import { Switch, FormControlLabel } from '@mui/material';
+
+<FormControlLabel
+  control={
+    <Switch
+      checked={isViewMode}
+      onChange={(event) => {
+        setIsViewMode(event.target.checked);
+        logEvent('mobileViewToggle');
+      }}
+    />
+  }
+  label="View Mode"
+/>
+```
+
+### 4. Lifecycle Migration
+**Svelte Lifecycle → React Hooks**
+
+```javascript
+// Svelte (current)
+onMount(async () => {
+  await initHandler();
+});
+
+$effect(() => {
+  if (isMobile) {
+    editorPane?.resize(50);
+  }
+});
+
+// React (target)
+useEffect(() => {
+  initHandler();
+}, []);
+
+useEffect(() => {
+  if (isMobile) {
+    editorPane?.resize(50);
+  }
+}, [isMobile]);
+```
+
+## Key Components to Migrate
+
+### Core Components
+1. **Editor** - [Editor.svelte](mdc:WebApp/mermaid-live-editor-develop/src/lib/components/Editor.svelte)
+2. **View** - [View.svelte](mdc:WebApp/mermaid-live-editor-develop/src/lib/components/View.svelte) - diagram rendering
+3. **Navbar** - [Navbar.svelte](mdc:WebApp/mermaid-live-editor-develop/src/lib/components/Navbar.svelte)
+4. **Actions** - [Actions.svelte](mdc:WebApp/mermaid-live-editor-develop/src/lib/components/Actions.svelte)
+5. **History** - [History.svelte](mdc:WebApp/mermaid-live-editor-develop/src/lib/components/History/History.svelte)
+
+### UI Components
+- **Card System** - [Card.svelte](mdc:WebApp/mermaid-live-editor-develop/src/lib/components/Card/Card.svelte)
+- **Resizable Panels** - UI components for layout
+- **Buttons, Inputs, Switches** - Basic UI components
+
+## Key Utilities to Migrate
+
+### Essential Utilities
+1. **Mermaid Integration** - [mermaid.ts](mdc:WebApp/mermaid-live-editor-develop/src/lib/util/mermaid.ts)
+2. **State Management** - [state.ts](mdc:WebApp/mermaid-live-editor-develop/src/lib/util/state.ts)
+3. **Persistence** - [persist.ts](mdc:WebApp/mermaid-live-editor-develop/src/lib/util/persist.ts)
+4. **Serialization** - [serde.ts](mdc:WebApp/mermaid-live-editor-develop/src/lib/util/serde.ts)
+5. **Pan/Zoom** - [panZoom.ts](mdc:WebApp/mermaid-live-editor-develop/src/lib/util/panZoom.ts)
+
+### Type Definitions
+- **Types** - [types.d.ts](mdc:WebApp/mermaid-live-editor-develop/src/lib/types.d.ts) - migrate to React-compatible types
+
+## Migration Steps
+
+### Phase 1: Foundation
+1. Set up React app with TypeScript
+2. Install Mermaid dependencies
+3. Create basic state management structure
+4. Migrate core types and utilities
+
+### Phase 2: Core Components
+1. Migrate View component (diagram rendering)
+2. Migrate Editor component (code editing)
+3. Migrate state management logic
+4. Implement persistence
+
+### Phase 3: UI Components
+1. Migrate layout components (Navbar, Resizable panels)
+2. Migrate UI components (buttons, inputs, etc.)
+3. Migrate Actions and History components
+4. Implement responsive design
+
+### Phase 4: Features
+1. Migrate theme system
+2. Migrate sharing functionality
+3. Migrate pan/zoom functionality
+4. Migrate error handling
+
+## React-Specific Considerations
+
+### Dependencies to Add
+```json
+{
+  "dependencies": {
+    "mermaid": "^10.x.x",
+    "@mermaid-js/layout-elk": "^0.x.x",
+    "@mermaid-js/mermaid-zenuml": "^0.x.x",
+    "lodash-es": "^4.x.x",
+    "pako": "^2.x.x",
+    "zustand": "^4.x.x",
+    "@mui/material": "^5.x.x",
+    "@mui/icons-material": "^5.x.x",
+    "@emotion/react": "^11.x.x",
+    "@emotion/styled": "^11.x.x",
+    "styled-components": "^6.x.x",
+    "react-router-dom": "^6.x.x"
+  },
+  "devDependencies": {
+    "@types/styled-components": "^5.x.x"
+  }
+}
+```
+
+### State Management 
+- **Zustand** - Primary state management solution with localStorage persistence
+- **Local component state** - useState for component-specific state
+- **MUI Theme Provider** - For theme management
+
+### Routing
+- **React Router** - For client-side routing
+- Handle hash-based routing for diagram sharing
+
+### Styling Architecture
+- **MUI Components** - Primary UI component library
+- **Tailwind CSS** - Utility classes for spacing, layout, and responsive design
+- **Styled Components** - Custom styled components (StyledComponentName convention)
+- **MUI Theme** - Global theming and design tokens
+
+## Testing Migration
+**No tests required** - Focus on functionality and user experience over testing during migration.
+
+## Styling Conventions
+
+### Styled Components Naming
+All styled components must follow the `StyledComponentName` convention:
+```javascript
+// ✅ Correct
+const StyledEditorContainer = styled(Box)`...`;
+const StyledNavbarButton = styled(Button)`...`;
+const StyledDiagramView = styled.div`...`;
+
+// ❌ Incorrect
+const editorContainer = styled(Box)`...`;
+const navbarButton = styled(Button)`...`;
+const StyledContainer = styled.div`...`; // Too generic
+```
+
+### MUI + Styled Components Integration
+```javascript
+// Base MUI component with styled-components extension
+const StyledMuiButton = styled(Button)`
+  && {
+    background: linear-gradient(45deg, #fe6b8b 30%, #ff8e53 90%);
+    border-radius: 3px;
+    border: 0;
+    color: white;
+    height: 48px;
+    padding: 0 30px;
+    box-shadow: 0 3px 5px 2px rgba(255, 105, 135, 0.3);
+  }
+`;
+
+// Combining with Tailwind classes
+<StyledMuiButton className="mt-4 mr-2">
+  Save Diagram
+</StyledMuiButton>
+```
+
+## Gotchas and Considerations
+1. **Event Handling**: React's synthetic events vs Svelte's native events
+2. **Reactivity**: React's explicit state updates vs Svelte's automatic reactivity
+3. **DOM Manipulation**: Direct DOM access patterns need useRef/useEffect
+4. **Bundle Size**: Ensure mermaid and dependencies are properly optimized
+5. **Performance**: Memoization for expensive operations (diagram rendering)
+6. **MUI Theme**: Ensure styled-components access MUI theme via props
+7. **Styled Components**: Use `&&` specificity for overriding MUI styles
+
+## File Structure Mapping
+```
+mermaid-live-editor-develop/src/
+├── routes/
+│   ├── +page.svelte → App.jsx (routing logic)
+│   ├── edit/+page.svelte → components/Editor/EditorPage.jsx
+│   └── +layout.svelte → components/Layout/AppLayout.jsx
+├── lib/
+│   ├── components/ → components/
+│   ├── util/ → hooks/ and utils/
+│   └── types.d.ts → types/index.ts
+```
+
+## React App File Structure (ff-mermaid-webapp)
+```
+ff-mermaid-webapp/
+├── public/
+│   ├── index.html
+│   ├── favicon.ico
+│   └── manifest.json
+├── src/
+│   ├── components/
+│   │   ├── Editor/
+│   │   │   ├── Editor.jsx
+│   │   │   ├── EditorPage.jsx
+│   │   │   ├── CodeEditor.jsx
+│   │   │   └── ConfigEditor.jsx
+│   │   ├── View/
+│   │   │   ├── DiagramView.jsx
+│   │   │   ├── StyledComponents.js
+│   │   │   └── PanZoomToolbar.jsx
+│   │   ├── Layout/
+│   │   │   ├── AppLayout.jsx
+│   │   │   ├── Navbar.jsx
+│   │   │   ├── ResizablePanels.jsx
+│   │   │   └── MobileLayout.jsx
+│   │   ├── Actions/
+│   │   │   ├── Actions.jsx
+│   │   │   ├── ShareButton.jsx
+│   │   │   ├── ExportButtons.jsx
+│   │   │   └── PresetSelector.jsx
+│   │   ├── History/
+│   │   │   ├── History.jsx
+│   │   │   ├── HistoryList.jsx
+│   │   │   └── HistoryItem.jsx
+│   │   └── UI/
+│   │       ├── Button.jsx
+│   │       ├── Card.jsx
+│   │       ├── Switch.jsx
+│   │       ├── Input.jsx
+│   │       └── StyledComponents.js
+│   ├── hooks/
+│   ├── utils/
+│   ├── types/
+│   │   ├── index.ts
+│   │   ├── state.ts
+│   │   └── mermaid.ts
+│   ├── store/
+│   │   ├── appStore.js
+│   │   └── themeStore.js
+│   ├── styles/
+│   │   ├── globals.css
+│   │   ├── theme.js
+│   │   └── styledComponents.js
+│   ├── App.jsx
+│   ├── main.jsx
+│   └── index.css
+├── package.json
+├── vite.config.js
+├── tailwind.config.js
+└── tsconfig.json
+```
+
+### Key Directory Purposes
+- **components/**: React components organized by feature
+- **hooks/**: Custom React hooks for reusable logic
+- **utils/**: Pure utility functions (migrate from Svelte lib/util)
+- **store/**: Zustand store configurations
+- **types/**: TypeScript type definitions
+- **styles/**: Global styles, theme configuration, and styled-components
+
+This migration guide provides the foundation for converting the Svelte-based Mermaid Live Editor to React while preserving all functionality and user experience.

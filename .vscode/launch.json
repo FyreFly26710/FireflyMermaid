@@ -2,7 +2,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "mermaid-live-editor",
+            "name": "mermaid-live-editor (Svelte)",
             "type": "node",
             "request": "launch",
             "cwd": "${workspaceFolder}/WebApp/mermaid-live-editor-develop",
@@ -11,6 +11,18 @@
                 "dev",
                 "--port",
                 "3001"
+            ],
+        },
+        {
+            "name": "ff-mermaid-webapp (React)",
+            "type": "node",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/WebApp/ff-mermaid-webapp",
+            "program": "${workspaceFolder}/WebApp/ff-mermaid-webapp/node_modules/vite/bin/vite",
+            "args": [
+                "dev",
+                "--port",
+                "5173"
             ],
         }
     ]
